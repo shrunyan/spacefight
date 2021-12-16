@@ -3,10 +3,10 @@
   "display": "standalone",
   "start_url": "/",
   "short_name": "Spacefight",
-  "theme_color": "#E1477E",
+  "theme_color": "#000",
   "description": "Grid based spaceship war game",
-  "orientation": "any",
-  "background_color": "#E1477E",
+  "orientation": "portrait",
+  "background_color": "#000",
   "related_applications": [],
   "prefer_related_applications": false,
   "icons": [
