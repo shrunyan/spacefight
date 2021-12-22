@@ -11,7 +11,9 @@ export class GameEngine {
   static battleship = { name: 'BATTLESHIP', size: 5 };
   static carrier = { name: 'CARRIER', size: 6 };
 
-  grid = 32;
+  grid = 8;
+  gridCount = 8 * 8;
+
   players = [
     {
       name: '',
@@ -59,6 +61,7 @@ export class GameEngine {
   ) {
     if (opts.grid) {
       this.grid = opts.grid;
+      this.cellCount = opts.grid * opts.grid;
     }
 
     this.generateCells();
@@ -90,6 +93,36 @@ export class GameEngine {
   start() {
     // place ships randomly
     console.log('GameEngine:start');
+
+    this.battleSpaceFriendly.ships.forEach((ship) => {
+      const cell = this.seed();
+      const coords = this.calcCoords(cell)
+
+      console.log('cell', cell);
+      console.log('coords', coords);
+    });
+  }
+
+  seed() {
+    return Math.floor(Math.random() * this.gridCount);
+  }
+
+  generateShips(seed) {}
+
+  /**
+   * Caclulate row, column coordinates from a cell
+   * @param cell
+   * @returns
+   */
+  calcCoords(cell: number) {
+    const decimal = cell / this.grid;
+    const remainder = decimal % 1 !== 0;
+    const floored = Math.floor(decimal);
+
+    const row = floored + 1;
+    const col = remainder ? cell - floored * this.grid : this.grid;
+
+    return [row, col];
   }
 
   /**
