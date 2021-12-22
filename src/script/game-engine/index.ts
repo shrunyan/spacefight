@@ -5,8 +5,19 @@ export type cell = {
   shot: string;
 };
 
+export type ship = {
+  name: string;
+  size: number;
+};
+
 export type board = {
   cells: Array<cell>;
+  ships: Array<ship>;
+};
+
+export type boards = {
+  enemy: board;
+  friendly: board;
 };
 
 export class GameEngine {
@@ -30,36 +41,15 @@ export class GameEngine {
     },
   ];
 
-  battleSpaceEnemy = {
-    cells: [
-      {
-        ship: GameEngine.none,
-        shot: GameEngine.none,
-      },
-    ],
-    ships: [
-      GameEngine.destroyer,
-      GameEngine.submarine,
-      GameEngine.crusier,
-      GameEngine.battleship,
-      GameEngine.carrier,
-    ],
-  };
-
-  battleSpaceFriendly = {
-    cells: [
-      {
-        ship: GameEngine.none,
-        shot: GameEngine.none,
-      },
-    ],
-    ships: [
-      GameEngine.destroyer,
-      GameEngine.submarine,
-      GameEngine.crusier,
-      GameEngine.battleship,
-      GameEngine.carrier,
-    ],
+  boards: boards = {
+    enemy: {
+      cells: [],
+      ships: [],
+    },
+    friendly: {
+      cells: [],
+      ships: [],
+    },
   };
 
   constructor(
@@ -72,8 +62,10 @@ export class GameEngine {
       this.gridCount = opts.grid * opts.grid;
     }
 
-    this.battleSpaceFriendly.cells = this.generateBoard(this.gridCount);
-    this.battleSpaceEnemy.cells = this.generateBoard(this.gridCount);
+    this.boards.friendly.cells = this.generateBoard(this.gridCount);
+    this.boards.enemy.cells = this.generateBoard(this.gridCount);
+    this.boards.friendly.ships = this.generateShips();
+    this.boards.enemy.ships = this.generateShips();
 
     // console.log('GameEngine', this);
   }
@@ -89,8 +81,18 @@ export class GameEngine {
     return cells;
   }
 
+  generateShips() {
+    return [
+      GameEngine.destroyer,
+      GameEngine.submarine,
+      GameEngine.crusier,
+      GameEngine.battleship,
+      GameEngine.carrier,
+    ];
+  }
+
   fire(index: number) {
-    const cell = this.battleSpaceEnemy.cells[index];
+    const cell = this.boards.enemy.cells[index];
 
     if (cell.ship !== GameEngine.none) {
       cell.shot = GameEngine.hit;
@@ -105,9 +107,9 @@ export class GameEngine {
     // place ships randomly
     // console.log('GameEngine:start');
 
-    const boards = [this.battleSpaceEnemy, this.battleSpaceFriendly];
+    // const boards = [this.battleSpaceEnemy, this.battleSpaceFriendly];
 
-    boards.forEach((board) => {
+    for (const [_, board] of Object.entries(this.boards)) {
       board.ships.forEach((ship) => {
         // generate basic cell info
         const cell = this.seed(this.gridCount);
@@ -185,11 +187,11 @@ export class GameEngine {
           this.place(board, cells, ship.name);
         }
       });
-    });
+    }
 
     console.log(this);
 
-    return boards;
+    return this.boards;
   }
 
   seed(max: number) {

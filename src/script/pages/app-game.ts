@@ -1,7 +1,7 @@
 import { LitElement, css, html } from 'lit';
 import { customElement } from 'lit/decorators.js';
 
-import { GameEngine, board, cell } from '../game-engine';
+import { GameEngine, cell } from '../game-engine';
 
 @customElement('app-game')
 export class AppGame extends LitElement {
@@ -50,30 +50,37 @@ export class AppGame extends LitElement {
     `;
   }
 
-  boards: Array<board> = [{ cells: [] }];
+  engine = {
+    boards: {
+      enemy: { cells: [] },
+      friendly: { cells: [] },
+    },
+  };
 
   constructor() {
     super();
 
-    const engine = new GameEngine({ grid: 12 });
-    const boards = engine.start();
+    console.log(this.engine);
 
-    console.log('boards', boards);
+    this.engine = new GameEngine({ grid: 12 });
+    this.engine.start();
 
-    this.boards = boards;
+    console.log('boards', this.engine);
   }
+
+  attack(cell) {}
 
   render() {
     return html`
       <main id="game">
         <section id="enemy" class="board">
-          ${this.boards[0].cells.map(
+          ${this.engine.boards.enemy.cells.map(
             (cell: cell, index: number) =>
               html`<div class="cell" data-index="${index}">${cell.ship}</div>`
           )}
         </section>
         <section id="fleet" class="board">
-          ${this.boards[1].cells.map(
+          ${this.engine.boards.friendly.cells.map(
             (cell: cell, index: number) =>
               html`<div class="cell" data-index="${index}">${cell.ship}</div>`
           )}
