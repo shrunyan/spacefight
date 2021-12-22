@@ -4,7 +4,7 @@
   "description": "A starter kit for building PWAs!",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "nyc --reporter=lcov --require ts-node/register tape src/**/*.spec.{ts,js} | tap-spec; nyc report ---reporter=text",
     "build": "rimraf dist/ && rollup --config rollup.config.js && node workbox.mjs",
     "start": "concurrently \"rollup --config rollup.config.dev.js --watch\" \"web-dev-server --app-index build/index.html --root-dir build/ --compatibility none --node-resolve --watch --open /\"",
     "dev": "concurrently \"rollup --config rollup.config.dev.js --watch\" \"web-dev-server --app-index build/index.html --root-dir build/ --compatibility none --node-resolve --watch --open /\"",
@@ -27,6 +27,7 @@
     "@rollup/plugin-strip": "^2.1.0",
     "@rollup/plugin-typescript": "^8.3.0",
     "@types/service_worker_api": "^0.0.9",
+    "@types/tape": "^4.13.2",
     "@typescript-eslint/eslint-plugin": "^5.6.0",
     "@typescript-eslint/parser": "^5.6.0",
     "@web/dev-server": "^0.1.28",
@@ -37,12 +38,19 @@
     "eslint-plugin-import": "^2.25.1",
     "eslint-plugin-node": "^11.1.0",
     "lit-analyzer": "^1.2.1",
+    "nyc": "^15.1.0",
     "prettier": "^2.5.1",
     "rimraf": "^3.0.2",
     "rollup": "^2.60.2",
     "rollup-plugin-copy": "^3.4.0",
     "rollup-plugin-terser": "^7.0.2",
     "rollup-plugin-workbox": "^6.2.0",
+    "tap-spec": "^5.0.0",
+    "tape": "^5.3.2",
+    "ts-node": "^10.4.0",
     "typescript": "^4.5.2"
+  },
+  "volta": {
+    "node": "16.13.1"
   }
 }

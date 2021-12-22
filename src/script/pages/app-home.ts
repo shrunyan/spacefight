@@ -102,7 +102,11 @@ export class AppHome extends LitElement {
   render() {
     return html`
       <div>
-        <div id="welcomeBar">
+
+      <h1 style="font-size: 16vh;margin: 0;">Battle ships in space</h1>
+
+      <!--
+      <div id="welcomeBar">
           <fluent-card id="welcomeCard">
             <h2>${this.message}</h2>
 
@@ -174,6 +178,7 @@ export class AppHome extends LitElement {
           </fluent-card>
         </div>
         <pwa-install>Install PWA Starter</pwa-install>
+        -->
       </div>
     `;
   }
