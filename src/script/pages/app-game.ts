@@ -1,145 +1,84 @@
 import { LitElement, css, html } from 'lit';
 import { customElement } from 'lit/decorators.js';
 
-import { GameEngine } from '../game-engine';
+import { GameEngine, board, cell } from '../game-engine';
 
 @customElement('app-game')
 export class AppGame extends LitElement {
   static get styles() {
     return css`
-
-    #game {
+      #game {
         height: 100%;
         width: 100%;
         display: grid;
         grid-template-rows: 1fr 1fr;
-    }
+      }
 
-    #enemy {
+      #enemy {
         border-bottom: 3px solid red;
-    }
-    #fleet {
+      }
+      #fleet {
         border-top: 3px solid red;
-    }
+      }
 
-    .board {
+      .board {
         background-color: #444;
         display: grid;
 
         /*
-        grid base, e.g. 6 in a 6x6 grid, determines repeat and devisor
-        number of cells to render is grid result, e.g. 6x6 = 36 cells
+        grid base, e.g. 12 in a 12x12 grid, determines repeat and devisor
+        number of cells to render is grid result, e.g. 12x12 = 64 cells
         */
-        grid-template-columns: repeat(6, calc(100% / 6));
-        grid-template-rows: repeat(6, calc(100% / 6));
-    }
-    .cell {
+        grid-template-columns: repeat(12, calc(100% / 12));
+        grid-template-rows: repeat(12, calc(100% / 12));
+      }
+      .cell {
         border: 1px solid #000;
-    }
-    .cell:hover,
-    .cell:focus,
-    .cell.active {
+      }
+      .cell:hover,
+      .cell:focus,
+      .cell.active {
         background-color: #666;
-    }
+      }
 
-    .cell.miss {
+      .cell.miss {
         background-color: blue;
-    }
-    .cell.hit {
+      }
+      .cell.hit {
         background-color: red;
-    }
+      }
     `;
   }
+
+  boards: Array<board> = [{ cells: [] }];
 
   constructor() {
     super();
 
-    console.log('AppGame');
+    const engine = new GameEngine({ grid: 12 });
+    const boards = engine.start();
 
-    const engine = new GameEngine();
-    engine.start();
+    console.log('boards', boards);
+
+    this.boards = boards;
   }
 
   render() {
     return html`
-    <main id="game">
+      <main id="game">
         <section id="enemy" class="board">
-        <div class="cell"></div>
-        <div class="cell"></div>
-        <div class="cell"></div>
-        <div class="cell"></div>
-        <div class="cell"></div>
-        <div class="cell"></div>
-        <div class="cell"></div>
-        <div class="cell"></div>
-        <div class="cell"></div>
-        <div class="cell"></div>
-        <div class="cell"></div>
-        <div class="cell"></div>
-        <div class="cell"></div>
-        <div class="cell"></div>
-        <div class="cell"></div>
-        <div class="cell"></div>
-        <div class="cell"></div>
-        <div class="cell"></div>
-        <div class="cell"></div>
-        <div class="cell"></div>
-        <div class="cell"></div>
-        <div class="cell"></div>
-        <div class="cell"></div>
-        <div class="cell"></div>
-        <div class="cell"></div>
-        <div class="cell"></div>
-        <div class="cell"></div>
-        <div class="cell"></div>
-        <div class="cell"></div>
-        <div class="cell"></div>
-        <div class="cell"></div>
-        <div class="cell"></div>
-        <div class="cell"></div>
-        <div class="cell"></div>
-        <div class="cell"></div>
-        <div class="cell"></div>
+          ${this.boards[0].cells.map(
+            (cell: cell, index: number) =>
+              html`<div class="cell" data-index="${index}">${cell.ship}</div>`
+          )}
         </section>
         <section id="fleet" class="board">
-        <div class="cell"></div>
-        <div class="cell"></div>
-        <div class="cell"></div>
-        <div class="cell"></div>
-        <div class="cell"></div>
-        <div class="cell"></div>
-        <div class="cell"></div>
-        <div class="cell"></div>
-        <div class="cell"></div>
-        <div class="cell"></div>
-        <div class="cell"></div>
-        <div class="cell"></div>
-        <div class="cell"></div>
-        <div class="cell"></div>
-        <div class="cell"></div>
-        <div class="cell"></div>
-        <div class="cell"></div>
-        <div class="cell"></div>
-        <div class="cell"></div>
-        <div class="cell"></div>
-        <div class="cell"></div>
-        <div class="cell"></div>
-        <div class="cell"></div>
-        <div class="cell"></div>
-        <div class="cell"></div>
-        <div class="cell"></div>
-        <div class="cell"></div>
-        <div class="cell"></div>
-        <div class="cell"></div>
-        <div class="cell"></div>
-        <div class="cell"></div>
-        <div class="cell"></div>
-        <div class="cell"></div>
-        <div class="cell"></div>
-        <div class="cell"></div>
-        <div class="cell"></div>
+          ${this.boards[1].cells.map(
+            (cell: cell, index: number) =>
+              html`<div class="cell" data-index="${index}">${cell.ship}</div>`
+          )}
         </section>
-    </main>
+      </main>
     `;
   }
 }
