@@ -1,6 +1,8 @@
 import { LitElement, css, html } from 'lit';
 import { customElement } from 'lit/decorators.js';
 
+import { GameEngine } from '../game-engine';
+
 @customElement('app-game')
 export class AppGame extends LitElement {
   static get styles() {
@@ -51,6 +53,11 @@ export class AppGame extends LitElement {
 
   constructor() {
     super();
+
+    console.log('AppGame');
+
+    const engine = new GameEngine();
+    engine.start();
   }
 
   render() {
