@@ -12,25 +12,33 @@ export class AppGame extends LitElement {
         width: 100%;
         display: grid;
         grid-template-rows: 1fr 1fr;
+        grid-template-areas: "a a"
+        "b b";
       }
 
       #player0 {
-        border-bottom: 3px solid red;
-        display: flex;
-        flex-direction: column;
-      }
-      #player1 {
-        border-top: 3px solid red;
+        grid-area: b;
+        border-top: 2px solid red;
         display: flex;
         flex-direction: column-reverse;
+      }
+      #player1 {
+        grid-area: a;
+        border-bottom: 2px solid red;
+        display: flex;
+        flex-direction: column;
       }
 
       .player header {
         padding: 0 8px;
         display: grid;
-        grid-template-columns: max-content max-content;
+        grid-template-columns: max-content max-content max-content;
         align-items: center;
         grid-gap: 10px;
+      }
+
+      .player header * {
+        margin: 0;
       }
 
       .player header .circle {
@@ -117,6 +125,7 @@ export class AppGame extends LitElement {
       return html`
             <section id="player${playerIndex}" class="player">
               <header>
+                <img src="https://robohash.org/${player.name}" height="50px" width="50px" />
                 <p>${player.name}</p>
                 ${this.game.currentPlayer === playerIndex ? html`<span class="circle">&nbsp;</span>` : null}
               </header>

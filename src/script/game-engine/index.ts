@@ -66,8 +66,8 @@ export class GameEngine {
         this.currentPlayer = 0;
 
         this.players = [
-            { name: this.generateName(), moves: [], robot: true },
-            { name: this.generateName(), moves: [], robot: false }
+            { name: "Stuart Runyan", moves: [], robot: false },
+            { name: this.generateName(), moves: [], robot: true }
         ]
 
         this.boards = [{
@@ -172,7 +172,8 @@ export class GameEngine {
         }
 
         console.log('robot attack: ', randPlayer, randCell);
-        this.attack(randPlayer, randCell)
+
+        setTimeout(() => this.attack(randPlayer, randCell), 1500)
     }
 
     populateShips(): void {
