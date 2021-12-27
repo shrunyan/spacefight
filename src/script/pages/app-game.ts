@@ -1,7 +1,7 @@
 import { LitElement, css, html } from 'lit';
-import { customElement } from 'lit/decorators.js';
+import { customElement, property } from 'lit/decorators.js';
 
-import { GameEngine, cell } from '../game-engine';
+import { GameEngine, cell, player } from '../game-engine';
 
 @customElement('app-game')
 export class AppGame extends LitElement {
@@ -14,16 +14,21 @@ export class AppGame extends LitElement {
         grid-template-rows: 1fr 1fr;
       }
 
-      #enemy {
+      #player0 {
         border-bottom: 3px solid red;
+        display: flex;
+        flex-direction: column;
       }
-      #fleet {
+      #player1 {
         border-top: 3px solid red;
+        display: flex;
+        flex-direction: column-reverse;
       }
 
       .board {
         background-color: #444;
         display: grid;
+        height: 100%;
 
         /*
         grid base, e.g. 12 in a 12x12 grid, determines repeat and devisor
@@ -42,50 +47,52 @@ export class AppGame extends LitElement {
       }
 
       .cell.miss {
-        background-color: blue;
+        background-color: white;
       }
       .cell.hit {
         background-color: red;
       }
+      .cell.destroyer,
+      .cell.submarine,
+      .cell.crusier,
+      .cell.battleship,
+      .cell.carrier {
+        background-color: blue;
+      }
     `;
   }
 
-  engine = {
-    boards: {
-      enemy: { cells: [] },
-      friendly: { cells: [] },
-    },
-  };
+  @property() game: GameEngine;
+  @property() hit = 0;
 
   constructor() {
     super();
-
-    console.log(this.engine);
-
-    this.engine = new GameEngine({ grid: 12 });
-    this.engine.start();
-
-    console.log('boards', this.engine);
+    this.game = new GameEngine({ grid: 12 });
+    this.game.start();
   }
 
-  attack(cell) {}
+  attack(player: number, cell: number) {
+    this.game.attack(player, cell)
+
+    // Changing value causes render
+    this.hit = cell
+  }
 
   render() {
-    return html`
-      <main id="game">
-        <section id="enemy" class="board">
-          ${this.engine.boards.enemy.cells.map(
-            (cell: cell, index: number) =>
-              html`<div class="cell" data-index="${index}">${cell.ship}</div>`
-          )}
-        </section>
-        <section id="fleet" class="board">
-          ${this.engine.boards.friendly.cells.map(
-            (cell: cell, index: number) =>
-              html`<div class="cell" data-index="${index}">${cell.ship}</div>`
-          )}
-        </section>
-      </main>
-    `;
+    return html`<main id="game">
+      ${this.game.players.map((player: player, playerIndex: number) => {
+      return html`
+            <section id="player${playerIndex}">
+              <header><p>${player.name}</p></header>
+              <div class="board">
+              ${this.game.boards[playerIndex].cells.map((cell: cell, cellIndex: number) => {
+        return html`
+          <div @click="${this.attack.bind(this, playerIndex, cellIndex)}" class="cell ${cell.shot.toLowerCase()}" data-cell="${cellIndex}">&nbsp;</div>`
+      })}
+              </div>
+            </section>
+          `
+    })}
+    </main>`;
   }
 }
