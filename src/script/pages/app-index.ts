@@ -11,14 +11,9 @@ import '../components/app-menu';
 export class AppIndex extends LitElement {
   static get styles() {
     return css`
-      #screen{
+      #routerOutlet {
         height: 100vh;
         width: 100vw;
-      }
-
-      #routerOutlet {
-        height: calc(100vh - 50px);
-        width: 100%;
       }
 
       #routerOutlet > .leaving {
@@ -91,7 +86,7 @@ export class AppIndex extends LitElement {
     return html`
       <div id="screen">
         <div id="routerOutlet"></div>
-        <app-menu></app-menu>
+        <!-- <app-menu></app-menu> -->
       </div>
     `;
   }

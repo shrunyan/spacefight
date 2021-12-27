@@ -24,7 +24,7 @@ export type board = {
 export interface GameEngine {
     grid: number;
     gridCount: number;
-    turn: number;
+    currentPlayer: number;
     players: Array<player>;
     boards: Array<board>;
     start(): void;
@@ -42,9 +42,17 @@ export class GameEngine {
     static battleship = { name: 'BATTLESHIP', size: 5 };
     static carrier = { name: 'CARRIER', size: 6 };
 
+    // used for lit to observe and render
+    currentPlayer: number;
+    static get currentPlayer(): number {
+        return this.currentPlayer
+    }
+    static set currentPlayer(n) {
+        this.currentPlayer = n
+    }
+
     grid: number;
     gridCount: number;
-    turn: number = 0;
     players: Array<player>;
     boards: Array<board>;
 
@@ -53,12 +61,9 @@ export class GameEngine {
             grid: 12
         }
     ) {
-        console.log('GameEngine:constructor');
-
         this.grid = opts.grid;
         this.gridCount = opts.grid * opts.grid;
-
-        this.turn = 0;
+        this.currentPlayer = 0;
 
         this.players = [
             { name: this.generateName(), moves: [], robot: true },
@@ -73,7 +78,16 @@ export class GameEngine {
             ships: this.generateShips()
         }]
 
-        console.log('GameEngine', this);
+        console.log('GameEngine:constructor', this);
+    }
+
+    start(): void {
+        this.populateShips()
+
+        // if player 0 is robot get started
+        if (this.players[this.currentPlayer].robot) {
+            this.robotMove()
+        }
     }
 
     generateBoard(size: number) {
@@ -100,52 +114,68 @@ export class GameEngine {
     attack(player: number, index: number): void {
         // console.log('GameEngine:attack', index);
 
-        this.players[this.turn].moves.push(index)
+        // Check if all cells are shot
+        const alive = this.boards[player].cells.find(cell => cell.shot === GameEngine.none)
+        if (!alive) {
+            // TODO determine and declare winner
+            console.log('game is over');
+            return
+        }
 
+
+        // record move
+        this.players[this.currentPlayer].moves.push(index)
+
+        // determine if it's a hit
         const cell = this.boards[player].cells[index];
-
         if (cell.ship !== GameEngine.none) {
             cell.shot = GameEngine.hit;
         } else {
             cell.shot = GameEngine.miss;
         }
 
-        // TODO determine game state. Are all ships sunk, is game over?
-
-
-        // TODO if continuing, switch player turn
-
-        const nextPlayer = this.turn + 1
+        // switch player turn
+        const nextPlayer = this.currentPlayer + 1
         if (nextPlayer > this.players.length - 1) {
-            this.turn = 0
+            this.currentPlayer = 0
         } else {
-            this.turn = nextPlayer
+            this.currentPlayer = nextPlayer
         }
 
-        console.log('nextPlayer', this.turn);
-
         // if next player is a robot, make move
-        if (this.players[this.turn].robot) {
-            console.log(
-                'roboto alive'
-            );
-
-            // // pick random cell
-            // let cell = null;
-
-            // while (!cell) {
-            //     const n = this.getRandomInt(0, this.gridCount)
-            //     if (this.boards.friendly.cells[n].shot === GameEngine.none) {
-            //         cell = n;
-            //     }
-            // }
-
-            // setTimeout(() => this.attack(cell), 1000)
+        if (this.players[this.currentPlayer].robot) {
+            this.robotMove()
         }
     }
 
-    start(): void {
-        // console.log('GameEngine:start');
+    robotMove() {
+        console.log('robot move');
+
+        // pick random player & cell
+        let randCell: number;
+        let randPlayer: number;
+        let run = true;
+
+        while (run) {
+            // pick player, supporting more than 2 players
+            randPlayer = this.getRandomInt(0, this.players.length)
+
+            // Random player is not the current player
+            if (randPlayer !== this.currentPlayer) {
+                const n = this.getRandomInt(0, this.gridCount)
+
+                if (this.boards[randPlayer].cells[n].shot === GameEngine.none) {
+                    randCell = n;
+                    run = false;
+                }
+            }
+        }
+
+        console.log('robot attack: ', randPlayer, randCell);
+        this.attack(randPlayer, randCell)
+    }
+
+    populateShips(): void {
         // place ships randomly
 
         this.boards.forEach(board => {
@@ -225,10 +255,6 @@ export class GameEngine {
                 return;
             });
         })
-
-        console.log(this);
-
-        // return this.boards;
     }
 
     rangeCells(size: number, cell: number, direction: string) {

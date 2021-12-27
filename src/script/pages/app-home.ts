@@ -12,6 +12,16 @@ export class AppHome extends LitElement {
 
   static get styles() {
     return css`
+
+      #home {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        text-align: center;
+        height: 100%;
+      }
+
       #welcomeBar {
         display: flex;
         justify-content: center;
@@ -101,9 +111,10 @@ export class AppHome extends LitElement {
 
   render() {
     return html`
-      <div>
+      <div id="home">
 
-      <h1 style="font-size: 16vh;margin: 0;">Battle ships in space</h1>
+        <h1 style="font-size: 16vh;margin: 0;">Battle ships in space</h1>
+        <fluent-anchor href="/game" appearance="hypertext">Launch</fluent-anchor>
 
       <!--
       <div id="welcomeBar">

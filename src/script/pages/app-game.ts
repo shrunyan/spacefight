@@ -25,6 +25,21 @@ export class AppGame extends LitElement {
         flex-direction: column-reverse;
       }
 
+      .player header {
+        padding: 0 8px;
+        display: grid;
+        grid-template-columns: max-content max-content;
+        align-items: center;
+        grid-gap: 10px;
+      }
+
+      .player header .circle {
+          background: green;
+          width: 10px;
+          height: 10px;
+          border-radius: 50%;
+      }
+
       .board {
         background-color: #444;
         display: grid;
@@ -37,6 +52,7 @@ export class AppGame extends LitElement {
         grid-template-columns: repeat(12, calc(100% / 12));
         grid-template-rows: repeat(12, calc(100% / 12));
       }
+
       .cell {
         border: 1px solid #000;
       }
@@ -65,14 +81,31 @@ export class AppGame extends LitElement {
   @property() game: GameEngine;
   @property() hit = 0;
 
+  @property() hack = 0
+
   constructor() {
     super();
     this.game = new GameEngine({ grid: 12 });
     this.game.start();
+
+    /**
+     * FIXME
+     * Force render every second because I don't know how
+     * to make lit observe the engine state and render based on it's changes
+     */
+    setInterval(() => this.hack++, 1000)
   }
 
   attack(player: number, cell: number) {
-    this.game.attack(player, cell)
+
+    console.log('current player', this.game.currentPlayer);
+    console.log('selected player board', player);
+
+    if (this.game.currentPlayer === player) {
+      console.log('You attacked your own board');
+    } else {
+      this.game.attack(player, cell)
+    }
 
     // Changing value causes render
     this.hit = cell
@@ -82,8 +115,11 @@ export class AppGame extends LitElement {
     return html`<main id="game">
       ${this.game.players.map((player: player, playerIndex: number) => {
       return html`
-            <section id="player${playerIndex}">
-              <header><p>${player.name}</p></header>
+            <section id="player${playerIndex}" class="player">
+              <header>
+                <p>${player.name}</p>
+                ${this.game.currentPlayer === playerIndex ? html`<span class="circle">&nbsp;</span>` : null}
+              </header>
               <div class="board">
               ${this.game.boards[playerIndex].cells.map((cell: cell, cellIndex: number) => {
         return html`
