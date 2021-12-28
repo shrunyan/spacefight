@@ -1,6 +1,20 @@
 # spacefight
 Battle ships in space. Offline and multiplayer.
 
+TODO
+- [ ] solve for ship collisions on placement
+- [ ] add random ship direction placement selection
+- [ ] add game engine unit tests
+  - [ ] figure out typescript with tap
+- [ ] lets players set their names
+- [ ] persist player and games to localstorage
+- [ ] multiplayer P2P handshake function https://developer.mozilla.org/en-US/docs/Games/Techniques/WebRTC_data_channels
+  - [ ] generate url hashes to allow returning to or sharing match
+  - [ ]
+- [ ] fix lit force render to show bot move
+- [ ] support upto 4 players
+- [ ]
+
 ---
 
 # pwa-starter
