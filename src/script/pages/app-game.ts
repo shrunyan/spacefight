@@ -39,13 +39,31 @@ export class AppGame extends LitElement {
 
       .player header * {
         margin: 0;
+        align-self: end;
       }
 
-      .player header .circle {
-          background: green;
-          width: 10px;
-          height: 10px;
-          border-radius: 50%;
+      .player .active {
+        color: green;
+      }
+
+      .player header .ships {
+        margin: 0;
+        padding: 0;
+      }
+      .player header .ships li {
+        margin: 0;
+        padding: 0 6px;
+        display: inline-block;
+      }
+
+      .player header .ships li .cell {
+        display: inline-block;
+        width: 6px;
+        height: 6px;
+        background-color: white;
+      }
+      .player header .ships li .cell.hit {
+        background-color: red;
       }
 
       .board {
@@ -126,8 +144,15 @@ export class AppGame extends LitElement {
             <section id="player${playerIndex}" class="player">
               <header>
                 <img src="https://robohash.org/${player.name}" height="50px" width="50px" />
-                <p>${player.name}</p>
-                ${this.game.currentPlayer === playerIndex ? html`<span class="circle">&nbsp;</span>` : null}
+                <p class="${this.game.currentPlayer === playerIndex ? "active" : null}">${player.name}</p>
+                <ul class="ships">
+                ${this.game.boards[playerIndex].ships.map(ship => {
+        const cells = this.game.boards[playerIndex].cells.filter(cell => cell.ship === ship.name)
+        return html`<li class="${ship.name}">${cells.map(cell => {
+          return html`<span class="cell ${cell.shot === GameEngine.hit ? 'hit' : null}"></span>`
+        })}</li>`
+      })}
+                <ul>
               </header>
               <div class="board">
               ${this.game.boards[playerIndex].cells.map((cell: cell, cellIndex: number) => {

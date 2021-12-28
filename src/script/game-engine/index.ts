@@ -1,6 +1,7 @@
 'use strict';
 
 export type cell = {
+    index: number;
     ship: string;
     shot: string;
 };
@@ -94,6 +95,7 @@ export class GameEngine {
         const cells = Array(size);
         for (let index = 0; index < cells.length; index++) {
             cells[index] = {
+                index: index,
                 ship: GameEngine.none,
                 shot: GameEngine.none,
             };
@@ -114,15 +116,6 @@ export class GameEngine {
     attack(player: number, index: number): void {
         // console.log('GameEngine:attack', index);
 
-        // Check if all cells are shot
-        const alive = this.boards[player].cells.find(cell => cell.shot === GameEngine.none)
-        if (!alive) {
-            // TODO determine and declare winner
-            console.log('game is over');
-            return
-        }
-
-
         // record move
         this.players[this.currentPlayer].moves.push(index)
 
@@ -134,17 +127,25 @@ export class GameEngine {
             cell.shot = GameEngine.miss;
         }
 
-        // switch player turn
-        const nextPlayer = this.currentPlayer + 1
-        if (nextPlayer > this.players.length - 1) {
-            this.currentPlayer = 0
+        // determine if game is over
+        const ships = this.boards[player].cells.filter(cell => cell.ship !== GameEngine.none)
+        const alive = ships.find(ship => ship.shot === GameEngine.none)
+        if (!alive) {
+            alert('game is over');
+            return;
         } else {
-            this.currentPlayer = nextPlayer
-        }
+            // switch player turn
+            const nextPlayer = this.currentPlayer + 1
+            if (nextPlayer > this.players.length - 1) {
+                this.currentPlayer = 0
+            } else {
+                this.currentPlayer = nextPlayer
+            }
 
-        // if next player is a robot, make move
-        if (this.players[this.currentPlayer].robot) {
-            this.robotMove()
+            // if next player is a robot, make move
+            if (this.players[this.currentPlayer].robot) {
+                this.robotMove()
+            }
         }
     }
 
@@ -162,10 +163,49 @@ export class GameEngine {
 
             // Random player is not the current player
             if (randPlayer !== this.currentPlayer) {
-                const n = this.getRandomInt(0, this.gridCount)
 
-                if (this.boards[randPlayer].cells[n].shot === GameEngine.none) {
-                    randCell = n;
+                // make the robot smarter by examining previously hit cells
+                // and select neighboring cells
+
+                // All cells which have been shot
+                const hits = this.boards[randPlayer].cells.filter(cell => cell.shot === GameEngine.hit)
+
+                // Adjacent cell
+                let adjacentCell: cell;
+
+                for (let index = 0; index < hits.length; index++) {
+                    const cell = hits[index];
+
+                    const left = cell.index - 1;
+                    const right = cell.index + 1;
+                    const up = cell.index - this.grid;
+                    const down = cell.index + this.grid;
+
+                    const dir = [up, right, down, left].find(dir => {
+                        // Check if cell is in bounds
+                        if (dir >= 0 && dir <= this.gridCount) {
+                            // If cell is not previously shot
+                            if (this.boards[randPlayer].cells[dir].shot === GameEngine.none) {
+                                return dir
+                            }
+                        }
+                    })
+
+                    if (dir) {
+                        adjacentCell = this.boards[randPlayer].cells[dir]
+                        break; // exit early
+                    }
+                }
+
+                let next: number
+                if (adjacentCell) {
+                    next = adjacentCell.index
+                } else {
+                    next = this.getRandomInt(0, this.gridCount)
+                }
+
+                if (this.boards[randPlayer].cells[next].shot === GameEngine.none) {
+                    randCell = next;
                     run = false;
                 }
             }
@@ -173,7 +213,7 @@ export class GameEngine {
 
         console.log('robot attack: ', randPlayer, randCell);
 
-        setTimeout(() => this.attack(randPlayer, randCell), 1500)
+        setTimeout(() => this.attack(randPlayer, randCell), 0)
     }
 
     populateShips(): void {
