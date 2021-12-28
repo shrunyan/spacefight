@@ -7,6 +7,11 @@ import { GameEngine, cell, player } from '../game-engine';
 export class AppGame extends LitElement {
   static get styles() {
     return css`
+      * {
+        margin: 0;
+        padding: 0;
+      }
+
       #game {
         height: 100%;
         width: 100%;
@@ -37,13 +42,17 @@ export class AppGame extends LitElement {
         grid-gap: 10px;
       }
 
-      .player header * {
-        margin: 0;
+      .player header > * {
         align-self: end;
       }
 
       .player .active {
         color: green;
+      }
+
+      .player .info {
+        display: flex;
+        flex-direction: column;
       }
 
       .player header .ships {
@@ -54,6 +63,9 @@ export class AppGame extends LitElement {
         margin: 0;
         padding: 0 6px;
         display: inline-block;
+      }
+      .player header .ships li:first-child {
+        padding-left: 0px;
       }
 
       .player header .ships li .cell {
@@ -144,15 +156,17 @@ export class AppGame extends LitElement {
             <section id="player${playerIndex}" class="player">
               <header>
                 <img src="https://robohash.org/${player.name}" height="50px" width="50px" />
-                <p class="${this.game.currentPlayer === playerIndex ? "active" : null}">${player.name}</p>
-                <ul class="ships">
-                ${this.game.boards[playerIndex].ships.map(ship => {
+                <div class="info">
+                  <p class="${this.game.currentPlayer === playerIndex ? "active" : null}">${player.name}</p>
+                  <ul class="ships">
+                  ${this.game.boards[playerIndex].ships.map(ship => {
         const cells = this.game.boards[playerIndex].cells.filter(cell => cell.ship === ship.name)
         return html`<li class="${ship.name}">${cells.map(cell => {
           return html`<span class="cell ${cell.shot === GameEngine.hit ? 'hit' : null}"></span>`
         })}</li>`
       })}
-                <ul>
+                  <ul>
+                <div>
               </header>
               <div class="board">
               ${this.game.boards[playerIndex].cells.map((cell: cell, cellIndex: number) => {

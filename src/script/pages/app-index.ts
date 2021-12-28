@@ -86,7 +86,7 @@ export class AppIndex extends LitElement {
     return html`
       <div id="screen">
         <div id="routerOutlet"></div>
-        <!-- <app-menu></app-menu> -->
+        <app-menu></app-menu>
       </div>
     `;
   }
