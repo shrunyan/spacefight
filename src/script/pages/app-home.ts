@@ -113,7 +113,7 @@ export class AppHome extends LitElement {
     return html`
       <div id="home">
 
-        <h1 style="font-size: 16vh;margin: 0;">Battle ships in space</h1>
+        <h1 style="font-size: 16vh;margin: 0;">Fight Ships in Space</h1>
         <fluent-anchor href="/game" appearance="hypertext">Launch</fluent-anchor>
 
       <!--
