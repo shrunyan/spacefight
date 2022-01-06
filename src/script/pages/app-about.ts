@@ -48,6 +48,7 @@ export class AppAbout extends LitElement {
           <ul>
             <li>https://pwabuilder.com</li>
             <li>https://robohash.org</li>
+            <li>https://codepen.io/erikterwan/pen/EVzeRP</li>
           <ul>
         </fluent-card>
       </div>

@@ -158,6 +158,7 @@ export class AppMenu extends LitElement {
   }
 
   render() {
+    // menu from https://codepen.io/erikterwan/pen/EVzeRP
     return html`
     <nav role="navigation">
       <div id="menuToggle">
